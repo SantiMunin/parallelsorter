@@ -52,4 +52,26 @@ public class ParallelUtilsTest {
 		assertEquals(ParallelUtils.checkParticipation(5, 3, 2), false);
 		assertEquals(ParallelUtils.checkParticipation(5, 3, 3), false);
 	}
+	
+	@Test
+	public void testRightSon() {
+		assertEquals(ParallelUtils.getRightSon(0, 1),1);
+		assertEquals(ParallelUtils.getRightSon(0, 2),2);
+		assertEquals(ParallelUtils.getRightSon(0, 3),4);
+		assertEquals(ParallelUtils.getRightSon(2, 1),3);
+		assertEquals(ParallelUtils.getRightSon(4, 1),5);
+		assertEquals(ParallelUtils.getRightSon(4, 2),6);
+		assertEquals(ParallelUtils.getRightSon(6, 1),7);
+	}
+	@Test
+	public void testGetParent() {
+		assertEquals(ParallelUtils.getParent(0, 0),0);
+		assertEquals(ParallelUtils.getParent(0, 1),0);
+		assertEquals(ParallelUtils.getParent(0, 2),0);
+		assertEquals(ParallelUtils.getParent(1, 0),0);
+		assertEquals(ParallelUtils.getParent(2, 0),2);
+		assertEquals(ParallelUtils.getParent(2, 1),0);
+		assertEquals(ParallelUtils.getParent(3, 0),2);
+
+	}
 }

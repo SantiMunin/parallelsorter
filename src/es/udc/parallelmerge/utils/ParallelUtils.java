@@ -4,6 +4,7 @@ import mpi.MPI;
 
 public class ParallelUtils {
 	private final static int TAG_SEND_DATA = 1;
+	private final static int TAG_SEND_DATA_PARENT = 2;
 
 	/**
 	 * Distributes the array between all the processes.
@@ -17,7 +18,6 @@ public class ParallelUtils {
 	 * @return The part regarding to each process.
 	 */
 	public static int[] initialDistribution(int me, int[] array, int nproc) {
-		log(me, "Distributing.");
 		int numberOfElements = array.length / nproc;
 		int[] result;
 		if (me == 0) {
@@ -36,58 +36,134 @@ public class ParallelUtils {
 				MPI.COMM_WORLD.Send(buffer, 0, numberOfElements, MPI.INT, i,
 						TAG_SEND_DATA);
 			}
-			log(me, "Done");
 		} else {
 			// Receive own numbers
 			result = new int[numberOfElements];
 			MPI.COMM_WORLD.Recv(result, 0, numberOfElements, MPI.INT, 0,
 					TAG_SEND_DATA);
 		}
-		log(me, "Distribution finished.");
-		log(me, "Done");
 		return result;
 	}
 
-	public static boolean checkParticipation(int nproc, int me, int height) { 
+	/**
+	 * Checks whether a process have to keep working or not.
+	 * 
+	 * @param nproc
+	 *            Number of processes.
+	 * @param me
+	 *            Process ID.
+	 * @param height
+	 *            Current height in the tree.
+	 * @return <b>true</b> if it has to keep working, <b>false</b> if not.
+	 */
+	public static boolean checkParticipation(int nproc, int me, int height) {
 		if (nproc <= me) {
 			return false;
 		}
-		for (int i = 0; i < nproc; i+=(int)Math.pow(2, height)) {
+		for (int i = 0; i < nproc; i += (int) Math.pow(2, height)) {
 			if (i == me) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
+	/**
+	 * Exits.
+	 * 
+	 * @param me
+	 *            Number of process.
+	 */
 	public static void exit(int me) {
 		log(me, "I'm no longer needed, bye bye :D");
 		MPI.Finalize();
 		System.exit(0);
 	}
 
-	public static void sendResultToParent(int me, int[] array) {
-		// TODO
+	/**
+	 * Sends a sorted array to the parent.
+	 * 
+	 * @param me
+	 *            Process ID.
+	 * @param parent
+	 *            Parent process ID.
+	 * @param array
+	 *            Array which will be sent.
+	 */
+	public static void sendResultToParent(int me, int parent, int[] array) {
+		log(me, "Sending result to parent (" + parent + "). Array of "
+				+ array.length + " elements.");
+		MPI.COMM_WORLD.Send(array, 0, array.length, MPI.INT, parent,
+				TAG_SEND_DATA_PARENT);
+		log(me, "Sent an array of " + array.length + " elements.");
 	}
 
-	public static int[] parentGetResult(int me) {
-		// TODO
-		return new int[1];
+	/**
+	 * Receives the result of a son.
+	 * 
+	 * @param me
+	 *            Process which sent data.
+	 * @param nproc
+	 * @param n
+	 * @param height
+	 * @return A sorted array
+	 */
+	public static int[] parentGetResult(int me, int nproc, int n, int height) {
+		int rightSon = getRightSon(me, height);
+		int size = n * ((int) Math.pow(2, height - 1)) / (nproc);
+		log(me, "Receiving result from " + rightSon + ", size = " + size);
+		int[] result = new int[size];
+		MPI.COMM_WORLD.Recv(result, 0, size, MPI.INT, rightSon,
+				TAG_SEND_DATA_PARENT);
+		log(me, "Received a result of " + size + " elements.");
+		return result;
 	}
 
+	/**
+	 * Gets the max height of the tree.
+	 * 
+	 * @param nproc
+	 * @return
+	 */
 	public static int getMaxHeight(int nproc) {
 		return (int) Math.floor(Math.log(nproc) / Math.log(2));
 	}
 
+	/**
+	 * Prints a message with the process ID. Example: <i>[me]: Message</i>
+	 * 
+	 * @param me
+	 *            Process ID.
+	 * @param message
+	 *            Message.
+	 */
 	public static void log(int me, String message) {
 		System.out.println("[" + me + "]: " + message);
 
 	}
 
+	/**
+	 * Gets the parent in the given level.
+	 * 
+	 * @param me
+	 *            Process ID.
+	 * @param height
+	 *            Current level in the tree.
+	 * @return Parent process ID.
+	 */
 	public static int getParent(int me, int height) {
 		return me & ~(1 << height);
 	}
 
+	/**
+	 * Gets the right son (previous level).
+	 * 
+	 * @param me
+	 *            Process ID.
+	 * @param height
+	 *            Current height
+	 * @return Right son ID.
+	 */
 	public static int getRightSon(int me, int height) {
 		if (height - 1 < 0) {
 			return -1;
