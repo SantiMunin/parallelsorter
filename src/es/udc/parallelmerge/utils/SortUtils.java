@@ -42,13 +42,39 @@ public class SortUtils {
 		return result;
 	}
 
-	public static int[] mergeSort(int[] values) {
+	private static int[] mergeSort(int[] values) {
 		return mergeSort(values, 0, values.length - 1);
 	}
 
-	public static int[] quickSort(int[] values) {
+	public static int[] sort(int[] values) {
 		// TODO
-		return mergeSort(values);
+		return quicksort(values, 0, values.length - 1);
 	}
 
+	private static int[] quicksort(int x[], int lo, int ho) {
+		int t, l = lo, h = ho, mid;
+
+		if (ho > lo) {
+			mid = x[(lo + ho) / 2];
+			while (l < h) {
+				while ((l < ho) && (x[l] < mid))
+					++l;
+				while ((h > lo) && (x[h] > mid))
+					--h;
+				if (l <= h) {
+					t = x[l];
+					x[l] = x[h];
+					x[h] = t;
+					++l;
+					--h;
+				}
+			}
+
+			if (lo < h)
+				quicksort(x, lo, h);
+			if (l < ho)
+				quicksort(x, l, ho);
+		}
+		return x;
+	}
 }

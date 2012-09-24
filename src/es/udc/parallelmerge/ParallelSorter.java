@@ -42,7 +42,7 @@ public class ParallelSorter {
 			startTime = System.currentTimeMillis();
 		}
 		array = ParallelUtils.initialDistribution(me, array, nproc);
-		array = SortUtils.quickSort(array);
+		array = SortUtils.sort(array);
 		int height = 0;
 		while (height < ParallelUtils.getMaxHeight(nproc)) {
 			int parent = ParallelUtils.getParent(me, height);
