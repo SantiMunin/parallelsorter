@@ -1,6 +1,22 @@
 package es.udc.parallelmerge.utils;
 
+/**
+ * Contains sort methods.
+ * 
+ * @author Santiago Munín
+ * 
+ */
 public class SortUtils {
+
+	/**
+	 * Merges two sorted arrays into another sorted which contains both.
+	 * 
+	 * @param left
+	 *            A sorted array.
+	 * @param right
+	 *            A sorted array.
+	 * @return A sorted array which length is left.length + right.length
+	 */
 	public static int[] merge(int[] left, int[] right) {
 		int n1 = left.length;
 		int n2 = right.length;
@@ -25,32 +41,21 @@ public class SortUtils {
 		return values;
 	}
 
-	private static int[] mergeSort(int[] values, int p, int r) {
-		int q;
-		int[] result = null;
-		if (p < r) {
-			q = (p + r) / 2;
-			int[] left = mergeSort(values, p, q);
-			int[] right = mergeSort(values, q + 1, r);
-			result = merge(left, right);
-		} else {
-			if (p == r && values.length > p) {
-				result = new int[1];
-				result[0] = values[p];
-			}
-		}
-		return result;
-	}
-
-	private static int[] mergeSort(int[] values) {
-		return mergeSort(values, 0, values.length - 1);
-	}
-
 	public static int[] sort(int[] values) {
-		// TODO
 		return quicksort(values, 0, values.length - 1);
 	}
 
+	/**
+	 * Implements the quicksort algorithm.
+	 * 
+	 * @param x
+	 *            Unsorted array.
+	 * @param lo
+	 *            Low index.
+	 * @param ho
+	 *            High index.
+	 * @return A sorted array.
+	 */
 	private static int[] quicksort(int x[], int lo, int ho) {
 		int t, l = lo, h = ho, mid;
 
@@ -76,5 +81,21 @@ public class SortUtils {
 				quicksort(x, l, ho);
 		}
 		return x;
+	}
+
+	/**
+	 * Checks if the given array is sorted (non-decreasing).
+	 * 
+	 * @param array
+	 *            of integers.
+	 * @return <b>true</b> if it's sorted, <b>false</b> if not.
+	 */
+	public static boolean checkSorted(int[] array) {
+		for (int i = 0; i < array.length-1; i++) {
+			if (array[i]>array[i+1]) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

@@ -2,9 +2,44 @@ package es.udc.parallelmerge.utils;
 
 import mpi.MPI;
 
+/**
+ * This class contains static methods which wrap the MPI functions.
+ * 
+ * @author Santiago Munín
+ * 
+ */
 public class ParallelUtils {
 	private final static int TAG_SEND_DATA = 1;
 	private final static int TAG_SEND_DATA_PARENT = 2;
+
+	/**
+	 * Initializes MPI.
+	 * 
+	 * @param args
+	 *            Program args (with FastMPJ data).
+	 * @return Only program args (without FastMPJ data).
+	 */
+	public static String[] initializeParallelEnvironment(String[] args) {
+		return MPI.Init(args);
+	}
+
+	/**
+	 * Gets the process ID.
+	 * 
+	 * @return Process ID.
+	 */
+	public static int getMyID() {
+		return MPI.COMM_WORLD.Rank();
+	}
+
+	/**
+	 * Gets the number of processes.
+	 * 
+	 * @return Number of processes.
+	 */
+	public static int getNProc() {
+		return MPI.COMM_WORLD.Size();
+	}
 
 	/**
 	 * Distributes the array between all the processes.
@@ -169,6 +204,5 @@ public class ParallelUtils {
 			return -1;
 		}
 		return me | (1 << (height - 1));
-
 	}
 }

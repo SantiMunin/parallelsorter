@@ -4,8 +4,16 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+/**
+ * Test class of ParallelUtils.
+ * 
+ * @author Santiago Munín
+ * 
+ */
 public class ParallelUtilsTest {
-
+	/**
+	 * Tests ParallelUtils.getMaxHeight(nproc).
+	 */
 	@Test
 	public void testGetHeight() {
 		assertEquals(ParallelUtils.getMaxHeight(2), 1);
@@ -28,6 +36,9 @@ public class ParallelUtilsTest {
 		assertEquals(ParallelUtils.getMaxHeight(45), 5);
 	}
 
+	/**
+	 * Tests ParallelUtils.checkParticipation(nproc, me, currentHeight).
+	 */
 	@Test
 	public void testCheckParticipation() {
 		int nproc = 4;
@@ -52,26 +63,32 @@ public class ParallelUtilsTest {
 		assertEquals(ParallelUtils.checkParticipation(5, 3, 2), false);
 		assertEquals(ParallelUtils.checkParticipation(5, 3, 3), false);
 	}
-	
+
+	/**
+	 * Tests ParallelUtils.getRightSon(me, currentHeight).
+	 */
 	@Test
 	public void testRightSon() {
-		assertEquals(ParallelUtils.getRightSon(0, 1),1);
-		assertEquals(ParallelUtils.getRightSon(0, 2),2);
-		assertEquals(ParallelUtils.getRightSon(0, 3),4);
-		assertEquals(ParallelUtils.getRightSon(2, 1),3);
-		assertEquals(ParallelUtils.getRightSon(4, 1),5);
-		assertEquals(ParallelUtils.getRightSon(4, 2),6);
-		assertEquals(ParallelUtils.getRightSon(6, 1),7);
+		assertEquals(ParallelUtils.getRightSon(0, 1), 1);
+		assertEquals(ParallelUtils.getRightSon(0, 2), 2);
+		assertEquals(ParallelUtils.getRightSon(0, 3), 4);
+		assertEquals(ParallelUtils.getRightSon(2, 1), 3);
+		assertEquals(ParallelUtils.getRightSon(4, 1), 5);
+		assertEquals(ParallelUtils.getRightSon(4, 2), 6);
+		assertEquals(ParallelUtils.getRightSon(6, 1), 7);
 	}
+
+	/**
+	 * Tests ParallelUtils.getParent(me, currentHeight).
+	 */
 	@Test
 	public void testGetParent() {
-		assertEquals(ParallelUtils.getParent(0, 0),0);
-		assertEquals(ParallelUtils.getParent(0, 1),0);
-		assertEquals(ParallelUtils.getParent(0, 2),0);
-		assertEquals(ParallelUtils.getParent(1, 0),0);
-		assertEquals(ParallelUtils.getParent(2, 0),2);
-		assertEquals(ParallelUtils.getParent(2, 1),0);
-		assertEquals(ParallelUtils.getParent(3, 0),2);
-
+		assertEquals(ParallelUtils.getParent(0, 0), 0);
+		assertEquals(ParallelUtils.getParent(0, 1), 0);
+		assertEquals(ParallelUtils.getParent(0, 2), 0);
+		assertEquals(ParallelUtils.getParent(1, 0), 0);
+		assertEquals(ParallelUtils.getParent(2, 0), 2);
+		assertEquals(ParallelUtils.getParent(2, 1), 0);
+		assertEquals(ParallelUtils.getParent(3, 0), 2);
 	}
 }

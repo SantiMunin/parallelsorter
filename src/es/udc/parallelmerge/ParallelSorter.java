@@ -2,11 +2,23 @@ package es.udc.parallelmerge;
 
 import java.util.Random;
 
-import mpi.MPI;
 import es.udc.parallelmerge.utils.ParallelUtils;
 import es.udc.parallelmerge.utils.SortUtils;
 
+/**
+ * Executes a parallel environment and sorts an array.
+ * 
+ * @author Santiago Munín
+ * 
+ */
 public class ParallelSorter {
+
+	private int n;
+	private int me;
+	private int nproc;
+	private long startTime;
+	private int[] array;
+
 	/**
 	 * Generates randomly an array of numbers.
 	 * 
@@ -24,26 +36,32 @@ public class ParallelSorter {
 	}
 
 	/**
-	 * Executes the calculation
+	 * Initializes the parallel environment.
 	 * 
 	 * @param args
-	 *            Args of the main method (they should contain FastMPJ data).
+	 *            Program args (with FastMPJ data).
 	 */
-	public void execute(String[] args) {
-		args = MPI.Init(args);
-		int n = Integer.valueOf(args[0]);
-		int me = MPI.COMM_WORLD.Rank();
-		int nproc = MPI.COMM_WORLD.Size();
+	private void initEnvironment(String[] args) {
+		args = ParallelUtils.initializeParallelEnvironment(args);
+		n = Integer.valueOf(args[0]);
+		me = ParallelUtils.getMyID();
+		nproc = ParallelUtils.getNProc();
 		ParallelUtils.checkParticipation(nproc, me, 0);
-		long startTime = 0;
-		int[] array = new int[n];
+		array = new int[n];
 		if (me == 0) {
 			array = generate(n);
 			startTime = System.currentTimeMillis();
 		}
+	}
+
+	/**
+	 * Performs the job (calculations).
+	 */
+	private void doJob() {
 		array = ParallelUtils.initialDistribution(me, array, nproc);
 		array = SortUtils.sort(array);
 		int height = 0;
+		// If nproc == 1 (sequential), it won't enter into the loop
 		while (height < ParallelUtils.getMaxHeight(nproc)) {
 			int parent = ParallelUtils.getParent(me, height);
 			height++;
@@ -59,13 +77,48 @@ public class ParallelSorter {
 				ParallelUtils.exit(me);
 			}
 		}
+	}
+
+	/**
+	 * Executes the calculation
+	 * 
+	 * @param args
+	 *            Args of the main method (they should contain FastMPJ data).
+	 */
+	public void execute(String[] args) {
+		initEnvironment(args);
+		doJob();
 		if (me == 0) {
 			// Print result
-			long endTime = System.currentTimeMillis();
-			ParallelUtils.log(me,
-					"Time: " + String.valueOf(endTime - startTime) + " (ms).");
+			printResult(me, startTime, array, n);
+
 		}
 		ParallelUtils.exit(me);
+	}
+
+	/**
+	 * Prints the time it took and checks if the answer is correct.
+	 * 
+	 * @param me
+	 *            Process ID.
+	 * @param startTime
+	 *            Start time (in ms).
+	 * @param array
+	 *            Sorted array.
+	 * @param n
+	 *            Number of elements.
+	 */
+	private static void printResult(int me, long startTime, int[] array, int n) {
+		long endTime = System.currentTimeMillis();
+		ParallelUtils.log(me, "Time: " + String.valueOf(endTime - startTime)
+				+ " (ms).");
+		ParallelUtils.log(me, "Checking if the result is correct...");
+		if (SortUtils.checkSorted(array) && array.length == n) {
+			// TODO improve
+			ParallelUtils.log(me, "\t...It's right!");
+		} else {
+			ParallelUtils.log(me, "\tUgh...!");
+		}
 	}
 
 	public static void main(String[] args) {
