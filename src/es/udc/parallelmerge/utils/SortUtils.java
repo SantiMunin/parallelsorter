@@ -42,45 +42,9 @@ public class SortUtils {
 	}
 
 	public static int[] sort(int[] values) {
-		return quicksort(values, 0, values.length - 1);
-	}
-
-	/**
-	 * Implements the quicksort algorithm.
-	 * 
-	 * @param x
-	 *            Unsorted array.
-	 * @param lo
-	 *            Low index.
-	 * @param ho
-	 *            High index.
-	 * @return A sorted array.
-	 */
-	private static int[] quicksort(int x[], int lo, int ho) {
-		int t, l = lo, h = ho, mid;
-
-		if (ho > lo) {
-			mid = x[(lo + ho) / 2];
-			while (l < h) {
-				while ((l < ho) && (x[l] < mid))
-					++l;
-				while ((h > lo) && (x[h] > mid))
-					--h;
-				if (l <= h) {
-					t = x[l];
-					x[l] = x[h];
-					x[h] = t;
-					++l;
-					--h;
-				}
-			}
-
-			if (lo < h)
-				quicksort(x, lo, h);
-			if (l < ho)
-				quicksort(x, l, ho);
-		}
-		return x;
+		QuickSort qs = new QuickSort(values);
+		qs.sort();
+		return values;
 	}
 
 	/**
@@ -91,8 +55,8 @@ public class SortUtils {
 	 * @return <b>true</b> if it's sorted, <b>false</b> if not.
 	 */
 	public static boolean checkSorted(int[] array) {
-		for (int i = 0; i < array.length-1; i++) {
-			if (array[i]>array[i+1]) {
+		for (int i = 0; i < array.length - 1; i++) {
+			if (array[i] > array[i + 1]) {
 				return false;
 			}
 		}
