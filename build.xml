@@ -1,0 +1,20 @@
+<project name="ParallelSorter" default="dist" basedir=".">
+    <description>
+        Parallel sorter using FastMPJ.
+    </description>
+
+  <property name="src" location="src"/>
+  <property name="bin" location="bin"/>
+  <property name="lib" location="lib/mpj.jar"/>
+
+  <target name="compile"
+        description="compile the source " >
+    <mkdir dir="${bin}"/>
+    <javac srcdir="${src}" destdir="${bin}" includeantruntime="false" classpath="${lib}"/>
+  </target>
+
+  <target name="clean"
+        description="clean up" >
+    <delete dir="${bin}"/>
+  </target>
+</project>
