@@ -46,13 +46,13 @@ public class ParallelSorter {
 		n = Integer.valueOf(args[0]);
 		me = ParallelUtils.getMyID();
 		nproc = ParallelUtils.getNProc();
-		//Levels of the tree
+		// Levels of the tree
 		int logn = (int) Math.floor(Math.log(nproc) / Math.log(2));
-		//If nproc isn't a power of two, reduce nproc.
+		// If nproc isn't a power of two, reduce nproc.
 		if ((int) Math.pow(2, logn) != nproc) {
-			ParallelUtils.log(me, "Last nproc:"+ nproc);
+			ParallelUtils.log(me, "Last nproc:" + nproc);
 			nproc = (int) Math.pow(2, logn);
-			ParallelUtils.log(me, "New nproc:"+ nproc);
+			ParallelUtils.log(me, "New nproc:" + nproc);
 		}
 		if (!ParallelUtils.checkParticipation(nproc, me, 0)) {
 			ParallelUtils.exit(me);
@@ -68,7 +68,6 @@ public class ParallelSorter {
 	 * Performs the job (calculations).
 	 */
 	private void doJob() {
-		ParallelUtils.log(me, "starting");
 		array = ParallelUtils.initialDistribution(me, array, nproc);
 		array = SortUtils.sort(array);
 		int height = 0;
@@ -76,14 +75,12 @@ public class ParallelSorter {
 		while (height < ParallelUtils.getMaxHeight(nproc)) {
 			int parent = ParallelUtils.getParent(me, height);
 			height++;
-			ParallelUtils.log(me, "PArent: " + parent);
 			if (me == parent) {
 				int[] childArr = ParallelUtils.parentGetResult(me, nproc, n,
 						height);
 				array = SortUtils.merge(array, childArr);
 			} else {
 				ParallelUtils.sendResultToParent(me, parent, array);
-				ParallelUtils.log(me, "Done");
 			}
 			if (!ParallelUtils.checkParticipation(nproc, me, height)) {
 				ParallelUtils.exit(me);

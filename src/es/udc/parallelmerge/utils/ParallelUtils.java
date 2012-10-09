@@ -124,13 +124,13 @@ public class ParallelUtils {
 	 *            Parent process ID.
 	 * @param array
 	 *            Array which will be sent.
+	 * 
 	 */
 	public static void sendResultToParent(int me, int parent, int[] array) {
 		log(me, "Sending result to parent (" + parent + "). Array of "
 				+ array.length + " elements.");
 		MPI.COMM_WORLD.Send(array, 0, array.length, MPI.INT, parent,
 				TAG_SEND_DATA_PARENT);
-		log(me, "Sent an array of " + array.length + " elements.");
 	}
 
 	/**
@@ -139,18 +139,21 @@ public class ParallelUtils {
 	 * @param me
 	 *            Process which sent data.
 	 * @param nproc
+	 *            Number of processes.
 	 * @param n
+	 *            Number of elements.
 	 * @param height
+	 *            Current level in the sorting tree.
 	 * @return A sorted array
 	 */
 	public static int[] parentGetResult(int me, int nproc, int n, int height) {
 		int rightSon = getRightSon(me, height);
-		int size = n * ((int) Math.pow(2, height - 1)) / (nproc);
+		int nfloor = (int) (Math.floor(n / nproc));
+		int size = nfloor * ((int) Math.pow(2, height - 1));
 		log(me, "Receiving result from " + rightSon + ", size = " + size);
 		int[] result = new int[size];
 		MPI.COMM_WORLD.Recv(result, 0, size, MPI.INT, rightSon,
 				TAG_SEND_DATA_PARENT);
-		log(me, "Received a result of " + size + " elements.");
 		return result;
 	}
 
@@ -158,7 +161,7 @@ public class ParallelUtils {
 	 * Gets the max height of the tree.
 	 * 
 	 * @param nproc
-	 * @return
+	 * @return Sorting tree height.
 	 */
 	public static int getMaxHeight(int nproc) {
 		return (int) Math.floor(Math.log(nproc) / Math.log(2));
