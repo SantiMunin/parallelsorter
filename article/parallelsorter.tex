@@ -22,7 +22,7 @@
   This solution decreases the execution time and allows a larger number of elements to be sorted if we execute this application 
   in more than one computer (because it could avoid memory overflows when computing a huge number of elements).
   
-  About the tools, this program is writen in Java and uses the FastMPJ\footnote{\url{http://fastmpj.com/}} library in order to implement the communication between the processes and 
+  About the tools, this program was written in Java and uses the FastMPJ\footnote{\url{http://fastmpj.com/}} library in order to implement the communication between the processes and 
   JUnit\footnote{\url{http://www.junit.org/}} (unit testing framework).
   
 \end{abstract}
@@ -124,8 +124,7 @@ $5*10^7$ elements & 6246 & 4264 & 3344.6 & 3612.8\\
   a speedup of $6246/4264 = 1.8674$ (1 process vs 4 processes). However, there are two limitations where scaling the number of processes:
   \begin{itemize}
   \item Once the number of processes are more than the number of cores, part of the operations have to be done in sequential (since the CPU can't perform that number of operations simultaneously).
-   \item As the number of processes are increased, the sorting tree and the communications between processes grow. It only worth it if the number of elements remains
-    huge and the sequential way keeps being slower. Notice that when the number of elements is $5*10^5$, the execution time increases with the number of processes. This is because is cheaper to sort that small number of elements 
+   \item As the number of processes increases, so does the ordering tree, and therefore the communications between processes. This is only worth it if the number of items is large, thus justifying the additional expense of communications. Notice that when the number of elements is $5*10^5$, the execution time increases with the number of processes. This is because is cheaper to sort that small number of elements 
     in a sequential way rather than in parallel (because the cost of the communications). This could be solved by improving the communications flow.
    
   \end{itemize}
