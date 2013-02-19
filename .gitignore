@@ -5,3 +5,6 @@ bin/
 .aux
 .log
 *.class
+*.*~
+*.log
+*.aux
